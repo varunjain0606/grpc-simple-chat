@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/varunjain0606/grpc-simple-chat/protos";
+
+message User {
+  string id = 1;
+  string name = 2;
+}
+
+message Message {
+  User user = 1;
+  string content = 2;
+  string timestamp = 3;
+  string group = 4;
+  string to = 5;
+}
+
+message Connect {
+  User user = 1;
+  bool active = 2;
+  string group = 3;
+  string recipient = 4;
+  string type = 5;
+}
+
+message Type {
+    string type = 1;
+    Message message = 2;
+}
+
+message ItemQuery {
+    string type = 1;
+}
+message ItemResponse {
+    repeated Item items = 1;
+}
+message Item {
+    string name = 1;
+}
+
+message LoginRequest {
+    string name     = 1;
+}
+
+message LoginResponse {
+    string id = 1;
+}
+
+message LogoutRequest {
+    string id = 1;
+}
+
+message Group {
+    User user = 1;
+    string group = 2;
+}
+
+message LogoutResponse {}
+
+message Close {}
+
+service Broadcast {
+  rpc Login(LoginRequest) returns (LoginResponse) {}
+  rpc Logout(LogoutRequest) returns (LogoutResponse) {}
+  rpc CreateStream(Connect) returns (stream Message);
+  rpc CreateGroup(Group) returns (Close);
+  rpc LeaveGroup(Group) returns (Close);
+  rpc BroadcastMessage(Type) returns (Close);
+  rpc ListChannels(ItemQuery) returns (ItemResponse);
+}
