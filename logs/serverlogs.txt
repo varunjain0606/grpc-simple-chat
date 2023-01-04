@@ -1,0 +1,26 @@
+2023/01/03 21:48:46 INFO: Starting server at port :8080
+Creating new group home
+Group exists. Connecting user :varun to home
+2023/01/03 21:50:43 INFO: Sending message from:varun to: home
+Group exists. Connecting user :Tom to home
+2023/01/03 21:51:20 INFO: Sending message from:Tom to: home
+2023/01/03 21:51:20 INFO: Sending message from:varun to: home
+2023/01/03 21:51:26 INFO: Sending message from:varun to: home
+2023/01/03 21:51:26 INFO: Sending message from:Tom to: home
+2023/01/03 21:51:34 INFO: Sending message from:Tom to: home
+2023/01/03 21:51:34 INFO: Sending message from:varun to: home
+2023/01/03 21:51:45 INFO: Sending message from:Tom to: home
+2023/01/03 21:51:45 INFO: Sending message from:varun to: home
+2023/01/03 21:53:06 Creating stream between Eva and varun
+2023/01/03 21:53:06 Creating stream between varun and Eva
+2023/01/03 21:53:11 INFO: Sending message from:varun to: Eva
+2023/01/03 21:53:40 Creating stream between varun and Eva
+2023/01/03 21:53:40 Creating stream between Eva and varun
+2023/01/03 21:53:43 INFO: Sending message from:Eva to: varun
+2023/01/03 21:53:43 INFO: Sending message from:Eva to: varun
+2023/01/03 21:53:50 INFO: Sending message from:varun to: Eva
+2023/01/03 21:53:50 INFO: Sending message from:varun to: Eva
+2023/01/03 21:53:53 INFO: Sending message from:varun to: Eva
+2023/01/03 21:53:53 INFO: Sending message from:varun to: Eva
+2023/01/03 21:53:59 INFO: Sending message from:Eva to: varun
+2023/01/03 21:53:59 INFO: Sending message from:Eva to: varun

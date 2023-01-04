@@ -14,7 +14,15 @@ import (
 type Logout struct {}
 
 func logout(client *types.Client, ctx context.Context) error {
-	_, err := client.Logout(ctx, &pb.LogoutRequest{Id: ID})
+	user := &pb.User{
+		Id:   ID,
+		Name: UserName,
+	}
+	_, err := client.LeaveGroup(client.Context, &pb.Group{User: user, Group: GroupName})
+	if err != nil {
+		fmt.Printf("\nunable to leave group. %s\n", err.Error())
+	}
+	_, err = client.Logout(ctx, &pb.LogoutRequest{Id: ID})
 	if s, ok := status.FromError(err); ok && s.Code() == codes.Unavailable {
 		log.Println("unable to logout (connection already closed)")
 		return nil

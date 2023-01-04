@@ -1,0 +1,149 @@
+➜  /Users/vjain/go/src/github.com/grpc-simple-chat (main) go run client/client.go                                                                                                      ✭ ✱
+----------------------------------------------------------------
+                        Available commands
+----------------------------------------------------------------
+                        logout
+                        create_group
+                        leave_group
+                        list_channels
+                        exit
+                        help
+                        join_group
+                        send_message
+                        stream
+                        login
+$ login varun
+
+User logged in successfully
+----------------------------------------------------------------
+                        Available commands
+----------------------------------------------------------------
+                        login
+                        join_group
+                        send_message
+                        stream
+                        exit
+                        help
+                        logout
+                        create_group
+                        leave_group
+                        list_channels
+<varun>$ list_channels
+Groups:
+Users:
+        varun
+----------------------------------------------------------------
+                        Available commands
+----------------------------------------------------------------
+                        create_group
+                        leave_group
+                        list_channels
+                        exit
+                        help
+                        logout
+                        send_message
+                        stream
+                        login
+                        join_group
+<varun>$ create_group home
+
+Created group: home
+Created stream for group:home
+----------------------------------------------------------------
+                        Available commands
+----------------------------------------------------------------
+                        login
+                        join_group
+                        send_message
+                        stream
+                        exit
+                        help
+                        logout
+                        create_group
+                        leave_group
+                        list_channels
+<varun>$ 
+Write a message
+Press exit to come to the main menu
+Press enter to connect and start messaging
+hello
+varun : hello
+Tom : hi
+Tom : how are you, today?
+I'm okay. Thanks
+varun : I'm okay. Thanks
+Tom : Awesome. See you later!
+exit
+----------------------------------------------------------------
+                        Available commands
+----------------------------------------------------------------
+                        login
+                        join_group
+                        send_message
+                        stream
+                        help
+                        logout
+                        create_group
+                        leave_group
+                        list_channels
+                        exit
+<varun>$ 
+Write a message
+Press exit to come to the main menu
+Press enter to connect and start messaging
+hi
+varun : hi
+Eva : hello
+Eva : How are you?
+Good. Good
+varun : Good. Good
+exit
+----------------------------------------------------------------
+                        Available commands
+----------------------------------------------------------------
+                        login
+                        join_group
+                        send_message
+                        stream
+                        help
+                        logout
+                        create_group
+                        leave_group
+                        list_channels
+                        exit
+<varun>$ leave_group home
+
+User varun has left the group home
+----------------------------------------------------------------
+                        Available commands
+----------------------------------------------------------------
+                        login
+                        join_group
+                        send_message
+                        stream
+                        list_channels
+                        exit
+                        help
+                        logout
+                        create_group
+                        leave_group
+<varun>$ logout
+
+user logged out successfully
+----------------------------------------------------------------
+                        Available commands
+----------------------------------------------------------------
+                        exit
+                        help
+                        logout
+                        create_group
+                        leave_group
+                        list_channels
+                        login
+                        join_group
+                        send_message
+                        stream
+$ exit
+
+User not logged in
+exit status 1

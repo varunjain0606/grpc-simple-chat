@@ -45,7 +45,7 @@ func send(client *types.Client, comm string, user *pb.User, grp, friend string) 
 	}()
 
 	if back {
-		HandleInterativeCommands()
+		HandleCommands()
 	}
 	go func() {
 		client.Wg.Wait()
@@ -62,7 +62,6 @@ func (c *ReceiveMessage) Execute(client *types.Client, args []string) {
 		Id:   ID,
 		Name: UserName,
 	}
-	fmt.Println("Press enter to connect and start messaging")
 	if GroupName == "" || GroupName == "default" {
 		send(client, One2One , user, "", FriendName)
 	} else {

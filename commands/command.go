@@ -41,7 +41,7 @@ func GetCommandByName(name string) Command{
 	}
 }
 
-func HandleInterativeCommands(){
+func HandleCommands(){
 	for {
 		handleCommand("help")
 		if Islogged {
@@ -64,7 +64,6 @@ func HandleInterativeCommands(){
 
 
 func handleCommand( command string  ){
-	//println(command)
 	client := types.GetGrpcClient()
 	commandSplit := strings.Split(command, " ")
 	cmd := commandSplit[0]

@@ -34,4 +34,9 @@ func (c *CreateGroup) Execute(client *types.Client, args []string) {
 		fmt.Printf("\nunable to create group: %v\n", err)
 	}
 	fmt.Printf("\nCreated group: %v\n", args[0])
+
+	err = connect(client, Group, user, args[0], "")
+	if err!= nil {
+        fmt.Println(err)
+	}
 }
