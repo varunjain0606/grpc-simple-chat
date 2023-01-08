@@ -11,6 +11,10 @@ import (
 type Connect struct {}
 
 func (c *Connect) Execute(client *types.Client, args []string) {
+	if !Islogged {
+		fmt.Println("\nMust be logged in to send_message to friend")
+        return
+	}
 	if len(args) < 1 {
 		fmt.Println("\nRequired friend name")
 		return

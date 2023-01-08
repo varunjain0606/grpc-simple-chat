@@ -3,12 +3,14 @@ package commands
 import (
 	"bufio"
 	"context"
-	"fmt"
+	"log"
 	"os"
 	"time"
 
 	pb "github.com/varunjain0606/grpc-simple-chat/protos"
 	"github.com/varunjain0606/grpc-simple-chat/types"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type ReceiveMessage struct {}
@@ -38,7 +40,10 @@ func send(client *types.Client, comm string, user *pb.User, grp, friend string) 
 				Message: msg,
 			})
 			if err != nil {
-				fmt.Printf("Error Sending Message: %v", err)
+				if s, ok := status.FromError(err); ok && s.Code() == codes.Unavailable {
+					log.Fatalf("Unable to communicate with server. Exiting")
+				}
+				log.Println(err)
 				break
 			}
 		}

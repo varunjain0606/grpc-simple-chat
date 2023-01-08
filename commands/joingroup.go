@@ -53,6 +53,10 @@ func connect(client *types.Client, comm string, user *pb.User, grp, friend strin
 				fmt.Println("User does not exist. Press enter to continue")
 				streamerror = fmt.Errorf("user does not exist")
 				break
+			} else if s, ok := status.FromError(err); ok && s.Code() == codes.Unavailable {
+				fmt.Println("Transport is closing. Create new connection")
+				streamerror = fmt.Errorf("transport is closing")
+				break
 			} else if err == io.EOF {
 				streamerror = fmt.Errorf("stream closed by server")
 				break

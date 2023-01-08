@@ -56,7 +56,6 @@ func (s *Server) Login(_ context.Context, req *pb.LoginRequest) (*pb.LoginRespon
 	timestamp := time.Now()
 	id := sha256.Sum256([]byte(timestamp.String() + req.Name))
 	token := hex.EncodeToString(id[:])
-	//users[token] = req.Name
 	s.setName(token, req.Name)
 	return &pb.LoginResponse{Id: token}, nil
 }
@@ -102,7 +101,7 @@ func (s *Server) ListChannels(ctx context.Context, q *pb.ItemQuery) (*pb.ItemRes
 }
 
 func remove(s []string, i int) []string {
-	if len(s) >= i {
+	if len(s) > 1 {
 		s[i] = s[len(s)-1]
     	return s[:len(s)-1]
 	}
@@ -116,7 +115,6 @@ func (s *Server) CreateGroup(ctx context.Context, pgrp *pb.Group) (*pb.Close, er
 		fmt.Println("Group already exists")
 		err := status.Error(codes.AlreadyExists, "Group already exists")
 		return nil, err
-
 	} else {
 		fmt.Printf("Creating new group %s\n", pgrp.Group)
 		channels[pgrp.Group] = []string{pgrp.User.Id}
@@ -129,13 +127,16 @@ func (s *Server) LeaveGroup(ctx context.Context, pgrp *pb.Group) (*pb.Close, err
 	val, ok := channels[pgrp.Group]
     // If the key exists
     if ok {
-        fmt.Println("Group exists. Checking if user exists in group")
 		for k , v := range val {
 			if v == pgrp.User.Id {
 				val = remove(val, k)
+				fmt.Println("Removing user: ", pgrp.User.Name, " from group: ", pgrp.Group)
 			}
 		}
 		channels[pgrp.Group] = val
+		if len(channels[pgrp.Group]) == 0 {
+			delete(channels, pgrp.Group)
+		}
     } else {
 		err := status.Error(codes.NotFound, "Group does not exist")
 		return nil, err
@@ -255,11 +256,18 @@ func (s *Server) BroadcastMessage(ctx context.Context, msg *pb.Type) (*pb.Close,
 					if conn.active {
 						err := conn.stream.Send(msg.Message)
 						if err != nil {
-							grpcLog.Errorf("Error with Stream: %v - Error: %v", conn.stream, err)
+							if s, ok := status.FromError(err); ok && s.Code() == codes.Unavailable {
+								grpcLog.Errorf("Client %s - logged out", conn.name)
+							} else {
+								grpcLog.Errorf("Error in one2one stream: %v - Error: %v", conn.stream, err)
+							}
 							conn.active = false
+							grpcLog.Info("Deleting connection:", conn.name)
+							delete(s.One2One, conn.id)
 							conn.error <- err
+						} else {
+							grpcLog.Info("Sending message from:", conn.name, " to: ", conn.user)
 						}
-						grpcLog.Info("Sending message from:", conn.name, " to: ", conn.user)
 					}
 				}(msg, conn)
 			}
@@ -278,11 +286,18 @@ func (s *Server) BroadcastMessage(ctx context.Context, msg *pb.Type) (*pb.Close,
 							if conn.active {
 								err := conn.stream.Send(msg.Message)
 								if err != nil {
-									grpcLog.Errorf("Error with Stream: %v - Error: %v", conn.stream, err)
+									if s, ok := status.FromError(err); ok && s.Code() == codes.Unavailable {
+										grpcLog.Errorf("Client %s - logged out", conn.name)
+									} else {
+										grpcLog.Errorf("Error in group stream: %v - Error: %v", conn.stream, err)
+									}
 									conn.active = false
+									grpcLog.Info("Deleting connection:", conn.name, " from group:", conn.group)
+									delete(s.Group, conn.id)
 									conn.error <- err
+								} else {
+									grpcLog.Info("Sending message from:", conn.name, " to group: ", conn.group)
 								}
-								grpcLog.Info("Sending message from:", conn.name, " to: ", conn.group)
 							}
 					}(msg, conn)
 				}

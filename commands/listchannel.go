@@ -17,8 +17,10 @@ func (c *ListChannel) Execute(client *types.Client, args []string) {
 		fmt.Printf("Could not list channels: %v", err)
 	}
 	fmt.Println("Groups:")
-	for _, r := range val.Items {
-		fmt.Println("\t" + r.Name)
+	if len(val.Items) > 0 {
+		for _, r := range val.Items {
+			fmt.Println("\t" + r.Name)
+		}
 	}
 	val, err = client.ListChannels(client.Context, &pb.ItemQuery{
 		Type: "users",
@@ -27,7 +29,9 @@ func (c *ListChannel) Execute(client *types.Client, args []string) {
 		fmt.Printf("Could not list channels: %v", err)
 	}
 	fmt.Println("Users:")
-	for _, r := range val.Items {
-		fmt.Println("\t" + r.Name)
+	if len(val.Items) > 0 { 
+		for _, r := range val.Items {
+			fmt.Println("\t" + r.Name)
+		}
 	}
 }
