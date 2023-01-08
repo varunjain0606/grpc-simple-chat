@@ -102,15 +102,21 @@ func (s *Server) ListChannels(ctx context.Context, q *pb.ItemQuery) (*pb.ItemRes
 }
 
 func remove(s []string, i int) []string {
-    s[i] = s[len(s)-1]
-    return s[:len(s)-1]
+	if len(s) >= i {
+		s[i] = s[len(s)-1]
+    	return s[:len(s)-1]
+	}
+	return nil
 }
 
 func (s *Server) CreateGroup(ctx context.Context, pgrp *pb.Group) (*pb.Close, error) {
 	_, ok := channels[pgrp.Group]
 	// If the key exists
 	if ok {
-		fmt.Println("Group exists. You may connect to it")
+		fmt.Println("Group already exists")
+		err := status.Error(codes.AlreadyExists, "Group already exists")
+		return nil, err
+
 	} else {
 		fmt.Printf("Creating new group %s\n", pgrp.Group)
 		channels[pgrp.Group] = []string{pgrp.User.Id}
@@ -130,13 +136,27 @@ func (s *Server) LeaveGroup(ctx context.Context, pgrp *pb.Group) (*pb.Close, err
 			}
 		}
 		channels[pgrp.Group] = val
-    }
+    } else {
+		err := status.Error(codes.NotFound, "Group does not exist")
+		return nil, err
+	}
 	// to do. remove also the group connection
 	return &pb.Close{}, nil
 }
 
 func (s *Server) CreateStream(pconn *pb.Connect, stream pb.Broadcast_CreateStreamServer) error {
 	if pconn.Type == "one2one" {
+		exist := false
+		for _, v := range users {
+			if v == pconn.Recipient {
+				exist = true
+                break
+			}
+		}
+		if !exist {
+			err := status.Error(codes.InvalidArgument, "User does not exist")
+			return err
+		}
 		reverseConn := false
 		// check if connection already exists. If not then add. From - to and to-from
 		if len(s.One2One[pconn.User.Id]) == 0 {
@@ -155,7 +175,7 @@ func (s *Server) CreateStream(pconn *pb.Connect, stream pb.Broadcast_CreateStrea
 					}
 				}
             }
-        }
+		}
 		conn := &One2OneConnection{
 			stream: stream,
 			id:     pconn.User.Id,
@@ -188,8 +208,9 @@ func (s *Server) CreateStream(pconn *pb.Connect, stream pb.Broadcast_CreateStrea
 	} else if pconn.Type == "group" {
 		_, ok := s.Group[pconn.Group] 
 		if !ok {
-			log.Println("Group does not exist. Please create it")
-			return errors.New("group does not exist")
+			fmt.Println("Group does not exist", pconn.Group)
+			err := status.Error(codes.NotFound, "Group does not exist")
+			return err
 		}
 		conn := &GroupConnection{
 			stream: stream,

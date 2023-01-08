@@ -28,7 +28,7 @@ func connect(client *types.Client, comm string, user *pb.User, grp, friend strin
 		Type: comm,
 	})
 	if err != nil {
-		return fmt.Errorf("connection failed: %v", err)
+		fmt.Println(err)
 	}
 	GroupName = grp
 	FriendName = friend
@@ -45,6 +45,14 @@ func connect(client *types.Client, comm string, user *pb.User, grp, friend strin
 			msg, err := str.Recv()
 			if s, ok := status.FromError(err); ok && s.Code() == codes.Canceled {
 				streamerror = fmt.Errorf("stream cancelled (shutting down)")
+			} else if s, ok := status.FromError(err); ok && s.Code() == codes.NotFound {
+				fmt.Println("group does not exist. Press enter to continue")
+				streamerror = fmt.Errorf("group does not exist")
+				break
+			} else if s, ok := status.FromError(err); ok && s.Code() == codes.InvalidArgument {
+				fmt.Println("User does not exist. Press enter to continue")
+				streamerror = fmt.Errorf("user does not exist")
+				break
 			} else if err == io.EOF {
 				streamerror = fmt.Errorf("stream closed by server")
 				break

@@ -6,6 +6,8 @@ import (
 
 	pb "github.com/varunjain0606/grpc-simple-chat/protos"
 	"github.com/varunjain0606/grpc-simple-chat/types"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type LeaveGroup struct {}
@@ -33,7 +35,10 @@ func (c *LeaveGroup) Execute(client *types.Client, args []string) {
 
 	_, err := client.LeaveGroup(client.Context, &pb.Group{User: user, Group: args[0]})
 	if err != nil {
-		fmt.Printf("\nunable to leave group. %s\n", err.Error())
+		if s, ok := status.FromError(err); ok && s.Code() == codes.NotFound {
+			fmt.Printf("\nunable to leave group. %s\n", err.Error())
+			return
+		}
 	}
 	fmt.Printf("\nUser %s has left the group %s\n", UserName, args[0])
 }

@@ -6,6 +6,8 @@ import (
 
 	pb "github.com/varunjain0606/grpc-simple-chat/protos"
 	"github.com/varunjain0606/grpc-simple-chat/types"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type CreateGroup struct {}
@@ -31,7 +33,10 @@ func (c *CreateGroup) Execute(client *types.Client, args []string) {
 
 	_, err := client.CreateGroup(client.Context, &pb.Group{User: user, Group: args[0]})
 	if err != nil {
-		fmt.Printf("\nunable to create group: %v\n", err)
+		if s, ok := status.FromError(err); ok && s.Code() == codes.AlreadyExists {
+			fmt.Println("Group already exists. You may join")
+			return
+		}
 	}
 	fmt.Printf("\nCreated group: %v\n", args[0])
 
